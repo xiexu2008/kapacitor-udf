@@ -2,8 +2,8 @@ package table
 
 import (
 	"reflect"
-	"strconv"
 	"strings"
+	"utils"
 )
 
 // Table to hold CSV-formatted table
@@ -36,7 +36,7 @@ func (tbl *Table) LoadFromCsvString(tableStr string) error {
 	rows := strings.Split(tableStr, "\n")
 
 	// Load column names from the first row
-	tbl.colNames = SplitAndTrimSpace(rows[0], ",")
+	tbl.colNames = utils.SplitAndTrimSpace(rows[0], ",")
 
 	// Load column types from the second row
 	tbl.loadColumnTypes(rows[1])
@@ -45,6 +45,16 @@ func (tbl *Table) LoadFromCsvString(tableStr string) error {
 	tbl.loadBodyRows(rows[2:]...)
 
 	return nil
+}
+
+func (tbl *Table) GetColumnNameByIndex(i int) string {
+	// TODO: validate input
+	return tbl.colNames[i]
+}
+
+func (tbl *Table) GetColumnTypeByName(colName string) string {
+	// TODO: validate input
+	return tbl.colTypes[colName]
 }
 
 // GetRowByColumns to query the row which contains the same values of the fields
@@ -92,7 +102,7 @@ func (tbl *Table) GetRowByColumns(colNameToValue map[string]interface{}) map[str
 }
 
 func (tbl *Table) loadColumnTypes(typesStr string) {
-	colTypes := SplitAndTrimSpace(typesStr, ",")
+	colTypes := utils.SplitAndTrimSpace(typesStr, ",")
 
 	tbl.colTypes = make(map[string]string)
 	for i, col := range tbl.colNames {
@@ -109,53 +119,13 @@ func (tbl *Table) loadBodyRows(bodyRows ...string) {
 }
 
 func (tbl *Table) loadSingleRow(row string) []interface{} {
-	fieldsInStr := SplitAndTrimSpace(row, ",")
+	fieldsInStr := utils.SplitAndTrimSpace(row, ",")
 	fields := make([]interface{}, len(fieldsInStr))
 
 	for i, valStr := range fieldsInStr {
 		valType := tbl.colTypes[tbl.colNames[i]]
-		fields[i], _ = ConvertStringToType(valStr, valType)
+		fields[i], _ = utils.ConvertStringToType(valStr, valType)
 	}
 
 	return fields
-}
-
-// ConvertStringToType to convert string to the type specified and then
-// return the converted value back as interface{}.
-// If the type is not supported, nil will be returned back.
-func ConvertStringToType(value string, valType string) (interface{}, error) {
-	var result interface{}
-	var err error
-
-	switch valType {
-	case "string":
-		result = value
-	case "int":
-		tempVal, tempErr := strconv.Atoi(value)
-		err = tempErr
-		result = int64(tempVal)
-	case "float":
-		result, err = strconv.ParseFloat(value, 64)
-	case "bool":
-		result, err = strconv.ParseBool(value)
-	}
-
-	return result, err
-}
-
-// SplitAndTrimSpace to split a string by the delemiter passed-in
-// and then trim space.
-func SplitAndTrimSpace(rawStr string, splitBy string) []string {
-	rawStr = strings.TrimSpace(rawStr)
-	if len(rawStr) == 0 {
-		return []string{}
-	}
-
-	items := strings.Split(rawStr, splitBy)
-
-	for i := range items {
-		items[i] = strings.TrimSpace(items[i])
-	}
-
-	return items
 }
