@@ -6,6 +6,19 @@ import (
 	"testing"
 )
 
+func getTable() *Table {
+	tableCsv := `client,region,domestic,total,compliance
+	string,string,bool,int,float
+	TT,APAC,false,100,0.9
+	ATPIUK,EU,true,99,0.8
+	TT,APAC,true,66,0.95	`
+
+	t := Table{}
+	t.LoadFromCsvString(tableCsv)
+
+	return &t
+}
+
 func TestLoadFromCsvString(t *testing.T) {
 	// TODO: add negative test cases
 
@@ -45,6 +58,34 @@ func TestLoadFromCsvString(t *testing.T) {
 			}
 			if !reflect.DeepEqual(tc.expected.bodyRows, tc.table.bodyRows) {
 				t.Errorf("expected bodyRows %v, actual bodyRows %v", tc.expected.bodyRows, tc.table.bodyRows)
+			}
+		})
+	}
+}
+
+func TestGetRowByColumns(t *testing.T) {
+	// TODO: add negative test cases
+	tbl := getTable()
+
+	// test cases
+	for _, tc := range [...]struct {
+		query    map[string]interface{}
+		table    *Table
+		expected map[string]interface{}
+	}{
+		{map[string]interface{}{"client": "TT", "region": "APAC"},
+			tbl,
+			map[string]interface{}{"client": "TT", "region": "APAC", "domestic": false, "total": int64(100), "compliance": 0.9},
+		},
+		{map[string]interface{}{"client": "Unknown", "region": "APAC"},
+			tbl,
+			nil,
+		},
+	} {
+		t.Run(fmt.Sprintf("Get table row by cloumns %v", tc.query), func(t *testing.T) {
+			actual := tc.table.GetRowByColumns(tc.query)
+			if !reflect.DeepEqual(tc.expected, actual) {
+				t.Errorf("expected colNames %v, actual colNames %v", tc.expected, actual)
 			}
 		})
 	}

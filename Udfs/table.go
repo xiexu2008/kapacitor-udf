@@ -1,6 +1,7 @@
 package table
 
 import (
+	"reflect"
 	"strconv"
 	"strings"
 )
@@ -42,6 +43,50 @@ func (tbl *Table) LoadFromCsvString(tableStr string) error {
 
 	// Load all data (body) rows
 	tbl.loadBodyRows(rows[2:]...)
+
+	return nil
+}
+
+// GetRowByColumns to query the row which contains the same values of the fields
+// passed in (colNameToValue).
+// For example, the passed-in map with the value "client:TT, region:APAC" will
+// return the row "TT,APAC,false,100,0.9" of the table given below:
+//   `
+//   client,region,domestic,total,compliance
+//   string,string,bool,int,float
+//   TT,APAC,false,100,0.9
+//   ATPIUK,EU,true,99,0.8
+//   TT,APAC,true,66,0.95
+//   ...
+//   `
+// Note if there are multiple rows matched, the first occurrance is returned. In our
+// above example, the "TT,APAC,false,100,0.9" rather than "TT,APAC,true,66,0.95" is returned.
+func (tbl *Table) GetRowByColumns(colNameToValue map[string]interface{}) map[string]interface{} {
+	//TODO exception handling
+
+	for _, row := range tbl.bodyRows {
+		cntMatched := 0
+		for i := range row {
+			colName := tbl.colNames[i]
+			val, ok := colNameToValue[colName]
+			if ok {
+				if !reflect.DeepEqual(val, row[i]) {
+					break
+				}
+
+				cntMatched++
+			}
+		}
+
+		if cntMatched == len(colNameToValue) {
+			rowMatched := make(map[string]interface{})
+			for i, val := range row {
+				rowMatched[tbl.colNames[i]] = val
+			}
+
+			return rowMatched
+		}
+	}
 
 	return nil
 }
