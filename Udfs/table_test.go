@@ -6,6 +6,30 @@ import (
 	"testing"
 )
 
+func TestConvertStringToType(t *testing.T) {
+	// test cases
+	for _, tc := range [...]struct {
+		value    string
+		valType  string
+		expected interface{}
+	}{
+		{"TT", "string", "TT"},
+		{"100", "int", int64(100)},
+		{"999.999", "float", 999.999},
+		{"101.00", "float", 101.0},
+		{"true", "bool", true},
+		{"false", "bool", false},
+		{"Unknown", "unknown", nil},
+	} {
+		t.Run(fmt.Sprintf("Convert string '%s' to type '%s'", tc.value, tc.valType), func(t *testing.T) {
+			actual, _ := ConvertStringToType(tc.value, tc.valType)
+			if !reflect.DeepEqual(tc.expected, actual) {
+				t.Errorf("expected %v, actual %v", tc.expected, actual)
+			}
+		})
+	}
+}
+
 func TestSplitAndTrimSpace(t *testing.T) {
 	type checkFunc func([]string) error
 
