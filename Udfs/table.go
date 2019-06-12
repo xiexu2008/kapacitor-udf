@@ -120,6 +120,9 @@ func (tbl *Table) loadSingleRow(row string) []interface{} {
 	return fields
 }
 
+// ConvertStringToType to convert string to the type specified and then
+// return the converted value back as interface{}.
+// If the type is not supported, nil will be returned back.
 func ConvertStringToType(value string, valType string) (interface{}, error) {
 	var result interface{}
 	var err error
@@ -140,6 +143,8 @@ func ConvertStringToType(value string, valType string) (interface{}, error) {
 	return result, err
 }
 
+// SplitAndTrimSpace to split a string by the delemiter passed-in
+// and then trim space.
 func SplitAndTrimSpace(rawStr string, splitBy string) []string {
 	rawStr = strings.TrimSpace(rawStr)
 	if len(rawStr) == 0 {
