@@ -6,6 +6,50 @@ import (
 	"testing"
 )
 
+func TestLoadFromCsvString(t *testing.T) {
+	// TODO: add negative test cases
+
+	// test cases
+	for _, tc := range [...]struct {
+		tableCsvStr string
+		table       *Table
+		expected    *Table
+	}{
+		{"client,total,compliance,domestic\nstring,int,float,bool\nTT,100,0.9,true\nFCL,200,0.95,false",
+			&Table{},
+			&Table{
+				[]string{"client", "total", "compliance", "domestic"},
+				map[string]string{"client": "string", "total": "int", "compliance": "float", "domestic": "bool"},
+				[][]interface{}{{"TT", int64(100), 0.9, true}, {"FCL", int64(200), 0.95, false}},
+			},
+		},
+		{`client,total, compliance,domestic
+		string,int,float, bool
+		TT,100, 0.9,true
+		FCL,200,0.95, false`,
+			&Table{},
+			&Table{
+				[]string{"client", "total", "compliance", "domestic"},
+				map[string]string{"client": "string", "total": "int", "compliance": "float", "domestic": "bool"},
+				[][]interface{}{{"TT", int64(100), 0.9, true}, {"FCL", int64(200), 0.95, false}},
+			},
+		},
+	} {
+		t.Run(fmt.Sprintf("Load table from CSV-formatted string %s", tc.tableCsvStr), func(t *testing.T) {
+			tc.table.LoadFromCsvString(tc.tableCsvStr)
+			if !reflect.DeepEqual(tc.expected.colNames, tc.table.colNames) {
+				t.Errorf("expected colNames %v, actual colNames %v", tc.expected.colNames, tc.table.colNames)
+			}
+			if !reflect.DeepEqual(tc.expected.colTypes, tc.table.colTypes) {
+				t.Errorf("expected colTypes %v, actual colTypes %v", tc.expected.colTypes, tc.table.colTypes)
+			}
+			if !reflect.DeepEqual(tc.expected.bodyRows, tc.table.bodyRows) {
+				t.Errorf("expected bodyRows %v, actual bodyRows %v", tc.expected.bodyRows, tc.table.bodyRows)
+			}
+		})
+	}
+}
+
 func TestConvertStringToType(t *testing.T) {
 	// test cases
 	for _, tc := range [...]struct {
