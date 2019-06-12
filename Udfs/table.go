@@ -41,7 +41,7 @@ func (tbl *Table) LoadFromCsvString(tableStr string) error {
 	tbl.loadColumnTypes(rows[1])
 
 	// Load all data (body) rows
-	tbl.loadBodyRows(rows[2:])
+	tbl.loadBodyRows(rows[2:]...)
 
 	return nil
 }
@@ -55,7 +55,7 @@ func (tbl *Table) loadColumnTypes(typesStr string) {
 	}
 }
 
-func (tbl *Table) loadBodyRows(bodyRows []string) {
+func (tbl *Table) loadBodyRows(bodyRows ...string) {
 	tbl.bodyRows = make([][]interface{}, len(bodyRows))
 
 	for i, row := range bodyRows {
