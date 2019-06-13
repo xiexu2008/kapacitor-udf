@@ -2,6 +2,7 @@ package table
 
 import (
 	"fmt"
+	"path/filepath"
 	"reflect"
 	"testing"
 )
@@ -17,6 +18,50 @@ func getTable() *Table {
 	t.LoadFromCsvString(tableCsv)
 
 	return &t
+}
+
+func TestLoad(t *testing.T) {
+	tableFilePath, _ := filepath.Abs("./testdata/table.csv")
+	// test cases
+	for _, tc := range [...]struct {
+		in       string
+		table    *Table
+		expected *Table
+	}{
+		{`client,region,domestic,total,compliance
+		string,string,bool,int,float
+		TT,APAC,false,100,0.9
+		ATPIUK,EU,true,99,0.8
+		TT,APAC,true,66,0.95`,
+			&Table{},
+			&Table{
+				[]string{"client", "region", "domestic", "total", "compliance"},
+				map[string]string{"client": "string", "region": "string", "total": "int", "compliance": "float", "domestic": "bool"},
+				[][]interface{}{{"TT", "APAC", false, int64(100), 0.9}, {"ATPIUK", "EU", true, int64(99), 0.8}, {"TT", "APAC", true, int64(66), 0.95}},
+			},
+		},
+		{tableFilePath,
+			&Table{},
+			&Table{
+				[]string{"client", "region", "domestic", "total", "compliance"},
+				map[string]string{"client": "string", "region": "string", "total": "int", "compliance": "float", "domestic": "bool"},
+				[][]interface{}{{"TT", "APAC", false, int64(100), 0.9}, {"ATPIUK", "EU", true, int64(99), 0.8}, {"TT", "APAC", true, int64(66), 0.95}},
+			},
+		},
+	} {
+		t.Run(fmt.Sprintf("Load table from CSV-formatted string or file %s", tc.in), func(t *testing.T) {
+			tc.table.Load(tc.in)
+			if !reflect.DeepEqual(tc.expected.colNames, tc.table.colNames) {
+				t.Errorf("expected colNames %v, actual colNames %v", tc.expected.colNames, tc.table.colNames)
+			}
+			if !reflect.DeepEqual(tc.expected.colTypes, tc.table.colTypes) {
+				t.Errorf("expected colTypes %v, actual colTypes %v", tc.expected.colTypes, tc.table.colTypes)
+			}
+			if !reflect.DeepEqual(tc.expected.bodyRows, tc.table.bodyRows) {
+				t.Errorf("expected bodyRows %v, actual bodyRows %v", tc.expected.bodyRows, tc.table.bodyRows)
+			}
+		})
+	}
 }
 
 func TestLoadFromCsvString(t *testing.T) {

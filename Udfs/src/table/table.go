@@ -1,6 +1,7 @@
 package table
 
 import (
+	"io/ioutil"
 	"reflect"
 	"strings"
 
@@ -13,6 +14,19 @@ type Table struct {
 	colTypes map[string]string
 
 	bodyRows [][]interface{}
+}
+
+// Load to load table either from a file which defines the
+// table or a string which defines the table.
+// The parameter tableStr could be either a path to the
+// file or a string which defines the table.
+func (tbl *Table) Load(tableStr string) error {
+	buf, err := ioutil.ReadFile(tableStr)
+	if err == nil {
+		return tbl.LoadFromCsvString(string(buf))
+	}
+
+	return tbl.LoadFromCsvString(tableStr)
 }
 
 // LoadFromCsvString to load CSV-formatted table string.
