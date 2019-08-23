@@ -62,11 +62,13 @@ func (tbl *Table) LoadFromCsvString(tableStr string) error {
 	return nil
 }
 
+// GetColumnNameByIndex to get the name of column given the index of column
 func (tbl *Table) GetColumnNameByIndex(i int) string {
 	// TODO: validate input
 	return tbl.colNames[i]
 }
 
+// GetColumnTypeByName to get the type of column given the name of column
 func (tbl *Table) GetColumnTypeByName(colName string) string {
 	// TODO: validate input
 	return tbl.colTypes[colName]
