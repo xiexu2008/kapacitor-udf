@@ -1,11 +1,10 @@
-package main
+package jointable
 
 import (
+	"joinTable/utils"
+	"jointable/table"
 	"log"
 	"os"
-
-	"table"
-	"utils"
 
 	"github.com/influxdata/kapacitor/udf/agent"
 )
@@ -202,12 +201,13 @@ func (jt *joinTableHandler) Stop() {
 	close(jt.agent.Responses)
 }
 
-func main() {
+// StartAgent is the entry point to start UDF
+func StartAgent() {
 	a := agent.New(os.Stdin, os.Stdout)
 	h := newJoinTableHandler(a)
 	a.Handler = h
 
-	log.Println("Starting agent")
+	log.Println("Starting agent 'jointable'")
 	a.Start()
 	err := a.Wait()
 	if err != nil {
