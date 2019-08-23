@@ -1,11 +1,10 @@
-package utils_test
+package utils
 
 import (
 	"fmt"
+	"joinTable/utils"
 	"reflect"
 	"testing"
-
-	"utils"
 )
 
 func TestConvertStringToType(t *testing.T) {
@@ -67,7 +66,7 @@ func TestSplitAndTrimSpace(t *testing.T) {
 		slo`, ",", is("client", "domain", "slo")},
 	} {
 		t.Run(fmt.Sprintf("Split %s by '%s' and trim space", tc.strToSplit, tc.splitBy), func(t *testing.T) {
-			result := utils.SplitAndTrimSpace(tc.strToSplit, tc.splitBy)
+			result := SplitAndTrimSpace(tc.strToSplit, tc.splitBy)
 			if err := tc.check(result); err != nil {
 				t.Error(err)
 			}

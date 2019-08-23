@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"strings"
 
-	"utils"
+	"joinTable/utils"
 )
 
 // Table to hold CSV-formatted table
