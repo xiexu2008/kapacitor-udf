@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"strings"
 
-	"jointable/utils"
+	"github.com/xiexu2008/kapacitor-udf/pkg/jointable/utils"
 )
 
 // Table to hold CSV-formatted table
