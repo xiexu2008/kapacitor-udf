@@ -202,8 +202,8 @@ func (jt *joinTableHandler) Stop() {
 	close(jt.agent.Responses)
 }
 
-// StartAgent is the entry point to start UDF
-func StartAgent() {
+// Start is the entry point to start UDF
+func Start() {
 	a := agent.New(os.Stdin, os.Stdout)
 	h := newJoinTableHandler(a)
 	a.Handler = h

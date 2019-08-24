@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	jointable.StartAgent()
+	jointable.Start()
 }
