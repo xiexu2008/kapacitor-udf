@@ -21,7 +21,7 @@ func interplolateString(str string, p *agent.Point) (string, error) {
 			keyName.Reset()
 		} else if ch == '}' {
 			key := keyName.String()
-			val := getValueByKey(key, p)
+			val := stringifyValueByKey(key, p)
 			sb.WriteString(val)
 
 			isKeyName = false
@@ -40,7 +40,7 @@ func interplolateString(str string, p *agent.Point) (string, error) {
 	return sb.String(), nil
 }
 
-func getValueByKey(key string, p *agent.Point) string {
+func stringifyValueByKey(key string, p *agent.Point) string {
 	if val, ok := p.Tags[key]; ok {
 		return val
 	}

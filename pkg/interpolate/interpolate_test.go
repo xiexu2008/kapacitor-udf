@@ -46,7 +46,7 @@ func TestInterpolateString(t *testing.T) {
 	}
 }
 
-func TestGetValueByKey(t *testing.T) {
+func TestStringifyValueByKey(t *testing.T) {
 	pnt := getKapacitorPoint()
 
 	for _, tc := range [...]struct {
@@ -68,7 +68,7 @@ func TestGetValueByKey(t *testing.T) {
 	} {
 		t.Run(fmt.Sprintf("Interpolate string with positive integer"), func(t *testing.T) {
 
-			actual := getValueByKey(tc.key, tc.point)
+			actual := stringifyValueByKey(tc.key, tc.point)
 			if !reflect.DeepEqual(tc.exptected, actual) {
 				t.Errorf("expected %v, actual %v", tc.exptected, actual)
 			}
