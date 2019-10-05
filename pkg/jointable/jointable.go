@@ -51,7 +51,7 @@ func (jt *joinTableHandler) Init(r *agent.InitRequest) (*agent.InitResponse, err
 	for _, opt := range r.Options {
 		switch opt.Name {
 		case "table":
-			jt.table.LoadFromCsvString(opt.Values[0].Value.(*agent.OptionValue_StringValue).StringValue)
+			jt.table.Load(opt.Values[0].Value.(*agent.OptionValue_StringValue).StringValue)
 		case "on":
 			jt.on = utils.SplitAndTrimSpace(opt.Values[0].Value.(*agent.OptionValue_StringValue).StringValue, ",")
 		case "default":
