@@ -4,8 +4,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/xiexu2008/kapacitor-udf/pkg/jointable/table"
-	"github.com/xiexu2008/kapacitor-udf/pkg/jointable/utils"
+	"pkg/jointable/table"
+	"pkg/jointable/utils"
 
 	"github.com/influxdata/kapacitor/udf/agent"
 )

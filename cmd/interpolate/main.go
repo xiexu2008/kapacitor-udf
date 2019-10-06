@@ -1,6 +1,6 @@
 package main
 
-import "github.com/xiexu2008/kapacitor-udf/pkg/interpolate"
+import "pkg/interpolate"
 
 func main() {
 	interpolate.Start()

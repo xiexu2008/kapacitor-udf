@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/xiexu2008/kapacitor-udf/pkg/jointable"
+	"pkg/jointable"
 )
 
 func main() {
