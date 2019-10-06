@@ -3,11 +3,12 @@ package interpolate
 import (
 	"log"
 	"os"
-	"strconv"
 	"strings"
 	"unicode"
 
 	"github.com/influxdata/kapacitor/udf/agent"
+
+	"pkg/utils"
 )
 
 type interpolateHandler struct {
@@ -112,7 +113,7 @@ func interplolateString(str string, p *agent.Point) (string, error) {
 			keyName.Reset()
 		} else if ch == '}' {
 			key := keyName.String()
-			val := stringifyValueByKey(key, p)
+			val := utils.StringifyPointByKey(key, p)
 			sb.WriteString(val)
 
 			isKeyName = false
@@ -129,26 +130,6 @@ func interplolateString(str string, p *agent.Point) (string, error) {
 	}
 
 	return sb.String(), nil
-}
-
-func stringifyValueByKey(key string, p *agent.Point) string {
-	if val, ok := p.Tags[key]; ok {
-		return val
-	}
-	if val, ok := p.FieldsString[key]; ok {
-		return val
-	}
-	if val, ok := p.FieldsInt[key]; ok {
-		return strconv.FormatInt(val, 10)
-	}
-	if val, ok := p.FieldsDouble[key]; ok {
-		return strconv.FormatFloat(val, 'f', 2, 64)
-	}
-	if val, ok := p.FieldsBool[key]; ok {
-		return strconv.FormatBool(val)
-	}
-
-	return ""
 }
 
 func (ip *interpolateHandler) EndBatch(end *agent.EndBatch) error {
